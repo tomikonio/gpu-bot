@@ -1,5 +1,6 @@
 import praw
-import sched, time
+import time
+import smtplib, getpass
 
 saved = {}
 
@@ -24,14 +25,30 @@ def check_for_updates():
                 del saved[id]
     print(saved)
 
+def set_smtp_connection(user, password, message):
+    smtpObj = smtplib.SMTP('smtp-mail.outlook.com', 587)
+    smtpObj.ehlo()
+    smtpObj.starttls()
+    try:
+        smtpObj.login(user, password)
+        smtpObj.sendmail(user, user, 'Subject: GPU sale update.\n\nSent from GPU-BOT')
+    except smtplib.SMTPAuthenticationError:
+        print('Wrong username or password')
+    smtpObj.quit()
 
 
-s = sched.scheduler(time.time, time.sleep)
-reddit = praw.Reddit(client_id='nRhqSW1S9WfOdA', client_secret='CeQhsCuWYFinErouREl54koA89c', user_agent='bot')
+if __name__ == '__main__':
+    reddit = praw.Reddit(client_id='nRhqSW1S9WfOdA', client_secret='CeQhsCuWYFinErouREl54koA89c', user_agent='bot')
 
-check_for_updates()
-print(saved)
-while 1:
-    time.sleep(900)
-    check_for_updates()
+    user = input('Email: ')
+    password = input('Password: ')
+    # password = getpass.getpass('Password: ')
+
+    set_smtp_connection(user, password, 'HelloWorld!')
+
+    # check_for_updates()
+    # print(saved)
+    # while 1:
+    #     time.sleep(900)
+    #     check_for_updates()
 

@@ -1,8 +1,6 @@
 import praw
-import time
+import time, os
 import smtplib, getpass
-
-saved = {}
 
 
 def check_for_updates(user, password, destination):
@@ -40,14 +38,17 @@ def set_smtp_connection(user, password, destination, message):
 
 
 if __name__ == '__main__':
-    reddit = praw.Reddit(client_id='nRhqSW1S9WfOdA', client_secret='CeQhsCuWYFinErouREl54koA89c', user_agent='bot')
+    reddit = praw.Reddit(client_id=os.environ['CLIENT_ID'], client_secret=os.environ['CLIENT_SECRET'], user_agent='bot')
 
     user = input('Email: ')
     password = getpass.getpass()
     destination = input('Destination: ')
 
+    saved = {}
+
     check_for_updates(user, password, destination)
-    # print(saved)
+    print('Bot has started!')
+
     while 1:
         time.sleep(900)
         check_for_updates(user, password, destination)
